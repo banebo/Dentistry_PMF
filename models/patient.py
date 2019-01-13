@@ -88,9 +88,6 @@ def new_patient():
         surname = input("[?] Enter a valid patient surname: ").strip().title()
 
     contactInfo = input("[?] Patient contact [email or phone]: ").strip()
-    while not contactInfo:
-        contactInfo = input("[?] Enter a valid patient contact [email or phone]: ").strip()
-        
     while not contactInfo.strip():
         contactInfo = input("[?] Please enter contact info [email or phone]: ").strip()
 
@@ -153,8 +150,7 @@ def get_patients():
     patients = []
     file = open("database/patients.txt", "r")
     for line in file:
-        info = line.split(':')
-        info[-1] = info[-1].strip("\n")
+        info = line.strip(" \n").split(':')
         patients.append(Patient(info[0], info[1], info[2], info[3], info[4]))
 
     file.close()

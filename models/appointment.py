@@ -11,7 +11,7 @@ class Appointment:
         self.__patient = patient_id
         if not self.__patient:
             print("[-] Patient is missing")
-            return
+            return None
 
         self.__doctor = doctor_id
         if not self.__doctor:
@@ -30,6 +30,27 @@ class Appointment:
             str(self.get_doctorID())+":"+self.get_intervention()+ \
             ":"+self.get_description()
 
+    def tableRepr(self):
+        date = self.get_time()
+        date = "{:d}.{:d}.{:d} at {:d}:{:d}".format( \
+            date.day, date.month, date.year, date.hour, date.minute)
+        if self.get_doctor():
+            doctor = "dr."+self.get_doctor().get_surname()+" "+ \
+                self.get_doctor().get_name()
+        else:
+            doctor = "DoctorNotFound"
+
+        if self.get_patient():
+            patient = self.get_patient().get_name()+" "+ \
+                self.get_patient().get_surname()
+        else:
+            patient = "PatientNotFound"
+
+        return "{:^19}|{:^30}|{:^27}|{:^25}|\t{:70}|".format( \
+            date, doctor, patient, self.get_intervention(),
+            self.get_description()) 
+
+                
     def get_price(self):
         if not os.path.isfile("database/interventions.txt"):
             return 0
@@ -50,18 +71,19 @@ class Appointment:
 
     def get_patient(self): 
         for p in models.patient.get_patients():
-            if p.hashCode() == int(self.get_patientID()):
+            if p.hashCode() == self.get_patientID():
                 return p
         return None
  
     def get_doctor(self): 
         for dr in doctor.get_doctors():
-            if dr.hashCode() == int(self.get_doctorID()):
+            if dr.hashCode() == self.get_doctorID():
                 return dr
         return None
 
     def get_description(self): return self.__description
     def get_intervention(self): return self.__intervention
+
 
 def make_appointment():
     os.system("clear")
@@ -207,6 +229,7 @@ def bad_time(doctor, time):
 def print_choices(list):
     if len(list) == 0:
         print("[-] Nothing to show")
+        return
      
     print("\n[?] Choose: ")
     for i in range(len(list)):
@@ -215,14 +238,40 @@ def print_choices(list):
         else:
             print("\t[%d] %s %s" % (i+1, list[i].get_name(), list[i].get_surname()))
 
+    return
+
+def print_appoint_choices(list):
+    if len(list)==0:
+        print("[-] Nothing to show")
+        return
+
+    print("{:^3} ||".format("No.") +  get_appointmentHeader())
+    for i in range(len(list)):
+        row = "{:^3} ||".format(i+1) + list[i].tableRepr()
+        print(row)
+
+    return
+
+def get_appointmentHeader():
+    header = "{:^19}|{:^30}|{:^27}|{:^25}|\t{:^70}|\n".format( \
+        "Date and time", "Doctor","Patient","Intervention","Description")
+
+    n = len(header)
+    for i in range(n):
+        header += "-"
+
+    return header
+
 def choose(type=None, list=None):
-    if type == "doctors":
+    if (type == "doctors") and (not list):
         list = doctor.get_doctors()
 
     if len(list) == 0:
         return None
 
-    print_choices(list)
+    if type == "appointments": print_appoint_choices(list)
+    else: print_choices(list)
+
     choice = input("\n\t>> ")
 
     if not canStr2Int(choice):
@@ -232,7 +281,10 @@ def choose(type=None, list=None):
 
     while choice < 0 or choice > len(list):
         print("\n[-] Please enter a valid number")
-        print_choices(list)
+
+        if type == "appointments": print_appoint_choices(list)
+        else: print_choices(list)
+
         choice = input("\n\t>> ")
 
         if not canStr2Int(choice):
@@ -262,6 +314,73 @@ def find_patient():
 
     return patient
 
+def find_doctor():
+    drName = input("[?] Enter doctor's name: ")
+    drSurname = input("[?] Enter doctor's surname: ")
+    dr_search = models.doctor.search_doctors(drName, drSurname)
+
+    while len(dr_search) == 0:
+        print("\n[-] Doctor not found")
+        drName = input("[?] Enter doctor's name: ")
+        drSurname = input("[?] Enter doctor's surname: ")
+        dr_search = models.doctor.search_doctors(drName, drSurname)
+        
+    if len(dr_search) > 1:
+        doctor = choose(type='doctors', list=dr_search)
+    else:
+        doctor = dr_search[0]
+
+    return doctor
+
+def get_appointments():
+    if not os.path.isfile("database/appointments.txt"):
+        return None
+
+    appoints = []
+    file = open("database/appointments.txt")
+    for line in file:
+        info = line.strip(" \n").split(':')
+        if len(info) != 5: continue
+
+        appoints.append(Appointment(info[0].strip(), info[1].strip(), \
+            info[2].strip(), info[3].strip(), info[4].strip()))
+
+    file.close()
+    return appoints
+
+def get_appointments_dr_patient(doctor_obj, patient_obj):
+    appointments = get_appointments()
+    appoint_list = []
+
+    for appointment in appointments:
+        if (appointment.get_doctor().__equals__(doctor_obj)) and \
+        (appointment.get_patient().__equals__(patient_obj)):
+            appoint_list.append(appointment)
+
+    return appoint_list
+
+def search_appointment():
+    os.system("clear")
+    print("\n\tSEARCH APPOINTMENT\n")
+
+    patient_obj = find_patient()
+    doctor_obj = find_doctor()
+    appointments = get_appointments_dr_patient(doctor_obj, patient_obj)
+    if len(appointments) > 1:
+        print("\n")
+        appointment = choose(type="appointments",list=appointments)
+    else:
+        appointment = appointments[0]
+
+    print("\n\n")
+    print("[*] Appointment details:\n")
+    print(get_appointmentHeader())
+    print(appointment.tableRepr())
+
+    input("\n\nPress Enter to continue...")
+
+    return
+
 def canStr2Int(c):
     try:
         c = int(c)
@@ -270,3 +389,26 @@ def canStr2Int(c):
         return False
 
     return True
+
+def print_all_appointments():
+    if not os.path.isfile("database/appointments.txt"):
+        print("[-] No appointments.txt file")
+        return
+
+    appointments = get_appointments()
+    if len(appointments) == 0:
+        print("[-] No appointments")
+        return
+
+    appointments.sort(key=lambda x: x.get_time())
+            
+    print("\n"+get_appointmentHeader())
+    now = datetime.datetime.now()
+    for a in appointments:
+        if not a: continue
+        if a.get_time() > now:
+            print(a.tableRepr())
+
+
+    input("\n\nPress Enter to continue...")
+    return

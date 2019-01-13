@@ -91,3 +91,45 @@ def username_exists(username):
             return True
 
     return False
+
+def change_password(info):
+    os.system("clear")
+    print("\n\tPASSWORD CHANGE\n")
+    file = open("database/login.txt")
+    list = []
+    for line in file:
+        loginfo = line.strip(" \n").split(':')
+        list.append({'username':loginfo[0], 'password':loginfo[1]})
+    file.close()
+    
+    current_password = ""
+    for usr in list:
+        if usr['username'] == info['id']:
+            current_password = usr['password']
+            break
+
+    password = getpass.getpass("[?] Enter current password: ")
+    while current_password != crypt.crypt(password, current_password):
+        print("\n[-] Invalid password!")
+        password = getpass.getpass("[?] Enter current password: ")
+        
+    password1 = getpass.getpass("[?] Enter new password: ")
+    password2 = getpass.getpass("[?] Re-enter new password: ")
+
+    while password1 != password2:
+        password1 = getpass.getpass("[?] Enter new password: ")
+        password2 = getpass.getpass("[?] Re-enter new password: ")
+
+    for usr in list:
+        if usr['username'] == info['id']:
+            usr['password']=crypt.crypt(password1, crypt.mksalt(crypt.METHOD_SHA512))
+
+    file = open("database/login.txt", "w")
+    for usr in list:
+        file.write(usr['username']+":"+usr['password']+"\n")
+    file.close()
+
+    print("\n[+] Done")
+    input("\n\nPress Enter to continue...")
+
+    return

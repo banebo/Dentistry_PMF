@@ -4,6 +4,7 @@ import os
 import models.patient as patient
 from models.person import Person
 from models import appointment
+from models import admin
 
 class Nurse(Person):
     def __init__(self, id, name, surname):
@@ -29,11 +30,10 @@ def nurse_menu(info):
 
         if choice == '1':   appointment.make_appointment()
         elif choice == '2': patient.new_patient()
-        elif choice == '3': pass
-        elif choice == '3': pass
+        elif choice == '3': appointment.search_appointment()
         elif choice == '4': patient.search_patient()
-        elif choice == '5': pass
-        elif choice == '6': pass
+        elif choice == '5' : appointment.print_all_appointments()
+        elif choice == '6': admin.change_password()
         elif choice == 'x': exit(0)
 
 def printNurseMenu(info):
@@ -44,6 +44,6 @@ def printNurseMenu(info):
     print("\t[2] New patient")
     print("\t[3] Search appointment")
     print("\t[4] Search patient")
-    print("\t[5] View salary")
+    print("\t[5] View schedule")
     print("\t[6] Change password")
     print("\t[x] Logout and exit")

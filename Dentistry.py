@@ -7,7 +7,6 @@ import crypt
 import models.patient as patient
 import models.nurse as nurse
 import models.doctor as doctor
-import models.functions as func
 import models.admin as admin
 import models.appointment as appointment
 

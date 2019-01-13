@@ -3,6 +3,8 @@
 import os
 import hashlib
 from models.person import Person
+from models import appointment
+from models import admin
 
 class Doctor(Person):
 
@@ -35,13 +37,13 @@ def dr_menu(info):
             printDrMenu(info)
             choice = input("\n>> ")
 
-        if choice == '1':
-            print("Search appointment")
+        if choice == '1': appointment.search_appointment()
+        elif choice == '2': pass
+        elif choice == '3': appointment.print_all_appointments()
+        elif choice == '6': admin.change_password(info)
         elif choice == 'x':
             exit(0)
 
-        else: print("fuck you")
-        
 def printDrMenu(info):
     print("\nLoged-in as dr. %s %s (%s)" % \
         (info['name'],info['surname'],info['id']))
@@ -68,11 +70,36 @@ def get_doctors():
     doctors = []
     file = open("database/empList.txt", "r")
     for line in file:
-        line.strip("\n")
-        info = line.split(':')
+        info = line.strip(" \n").split(':')
         if info[-1].strip() == "doctor": 
             doctors.append(Doctor(info[0].strip(), \
                 info[1].strip(), info[2].strip()))
 
     file.close()
     return doctors
+
+def search_doctors(name, surname):
+    doctors = get_doctors()
+
+    if len(doctors) == 0:
+        print("[-] No doctors in database")
+        return None
+
+    doctor_list = []
+    name = name.strip().lower()
+    surname = surname.strip().lower()
+
+    for dr in doctors:
+        drname = dr.get_name().lower()
+        drsurname = dr.get_surname().lower()
+        if not surname:
+            if name == drname:
+                doctor_list.append(dr)
+        elif not name:
+            if surname == drsurname:
+                doctor_list.append(dr)
+        else:
+            if (surname==drsurname) and (name==drname):
+                doctor_list.append(p)
+
+    return doctor_list
