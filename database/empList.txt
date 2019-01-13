@@ -1,2 +1,2 @@
-dr:Drname:Drsur:male:doctor
-nurse:Nurs:Nurssur:female:nurse
+nurse:Dragica:Bozic:nurse
+dr:Milutin:Blazic:doctor

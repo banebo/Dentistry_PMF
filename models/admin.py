@@ -6,8 +6,8 @@ import crypt
 from models.person import Person
 
 class Admin(Person):
-    def __init__(self, name, surname, gender="none"):
-        super().__init__(name, surname, gender)
+    def __init__(self, name, surname):
+        super().__init__(name, surname)
 
     def __str__(self):
         return super().__str__() + ":admin"
@@ -17,7 +17,7 @@ def admin_menu(info):
         os.system("clear")                                                      
         printAdminMenu(info)                                                       
         choice = input("\n>> ")                                                 
-        while choice.lower() not in ('1','2','3','4','5','6','7','x'):          
+        while choice.lower() not in ('1','2','x'):          
             print("\n[-] Bad option "+choice)                                   
             printAdminMenu(info)                                                   
             choice = input("\n>> ")                                             
@@ -43,12 +43,16 @@ def registerPage():
     print("\nREGISTER\n")
 
     name = str(input("[?] Name: ")).strip().title()
+    while not name:
+        name = str(input("[?] Enter a valid name: ")).strip().title()
+        
     surname = str(input("[?] Surname: ")).strip().title()
-    username = str(input("[?] Username: ")).strip()
-    while username_exists(username):
-        username = str(input("[?] Username exists, enter another one: ")).strip()
+    while not surname:
+        surname = str(input("[?] Enter a valid surname: ")).strip().title()
 
-    gender = str(input("[?] Enter gender: ")).strip()
+    username = str(input("[?] Username: ")).strip()
+    while (not username) or username_exists(username):
+        username = str(input("[?] Invalid username, enter another one: ")).strip()
 
     pass1 = getpass.getpass("[?] Enter password: ")
     pass2 = getpass.getpass("[?] Re-enter password: ")
@@ -58,16 +62,10 @@ def registerPage():
         pass2 = getpass.getpass("[?] Re-enter password: ")
 
     empType = str(input("[?] Enter employee type [doctor/nurse]: ")).strip()
-    while (empType.lower() != "doctor") and (empType.lower() != "nurse"):
-        empType = str(input("[?] Enter employee type [doctor/nurse]: "))
-        emp.strip()
+    while empType.lower() not in ('doctor', 'nurse'):
+        empType = input("[?] Enter employee type [doctor/nurse]: ").strip()
 
-    if not(name and surname and username and gender):
-        print("[-] Registration failed!")
-        input("\nPress Enter to continue...")
-        return
-
-    info = username+":"+name+":"+surname+":"+gender+":"+empType+"\n"
+    info = username+":"+name+":"+surname+":"+empType+"\n"
     file = open("database/empList.txt", "a")
     file.write(info)
     file.close()
@@ -77,8 +75,8 @@ def registerPage():
     file.write(info)
     file.close()
 
-    print("\t[+] Done")
-    input("\nPress Enter to continue...")
+    print("\n[+] Done")
+    input("\n\nPress Enter to continue...")
 
     return
 
@@ -88,8 +86,8 @@ def username_exists(username):
 
     file = open("database/empList.txt", "r")
     for line in file:
-        if line.split(":")[0] == username:
+        if line.split(":")[0].strip() == username:
+            file.close()
             return True
 
-    file.close()
     return False

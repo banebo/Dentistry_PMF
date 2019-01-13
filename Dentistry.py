@@ -2,18 +2,25 @@
 
 import getpass
 import os
+import sys
 import crypt
 import models.patient as patient
 import models.nurse as nurse
 import models.doctor as doctor
 import models.functions as func
 import models.admin as admin
+import models.appointment as appointment
+
+sys.setrecursionlimit(3500)
 
 def loginPage():
     os.system("clear")
-    print("\n\tLOGIN")
+    print("\n\t{:^10}".format("LOGIN"))
     while True:
             username = str(input("\n[?] Enter username: "))
+            while not username.strip():
+                username = str(input("\n[?] Enter username: "))
+                
             password = getpass.getpass("[?] Enter password: ")
 
             if not login(username, password):
@@ -22,7 +29,6 @@ def loginPage():
             else:
                 return getInfo(username)
 
-    
 def login(username, password):
 
     if not username.strip() or not password.strip():
@@ -62,22 +68,20 @@ def getInfo(username):
     for line in file:
         if line.split(":")[0] == username:
             info = line.split(":")
-            if len(info) == 5:
+            if len(info) == 4:
                 return {'id': info[0], 'name':info[1], 'surname':info[2], \
-                'gender':info[3], 'empType':info[4].strip("\n")}
+                    'empType':info[3].strip("\n")}
 
     file.close()
     return None
 
-
 def main():
     os.system("clear")
 
-    print("\t WELCOME TO DENTISTRY\n\n")
-
     while True:
         info = loginPage()
-        if info == None: continue
+        if info == None: 
+            continue
 
         if info['id'] == "admin":
             admin.admin_menu(info)
@@ -97,7 +101,7 @@ if __name__ == "__main__":
             main()
 
         except KeyboardInterrupt as e:
-            choice = input("\n[!] Are you sure you want to exit [y/n]? ")
+            choice = input("\n\n[!] Are you sure you want to exit [y/n]? ")
             if choice.lower() == "y":
                 print("\n\n[*] Exiting...")
                 exit(0)

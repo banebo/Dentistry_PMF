@@ -18,7 +18,7 @@ def main():
         print("[-] Passwords do not match, aborting...")
 
     hashed = crypt.crypt(pass1, crypt.mksalt(crypt.METHOD_SHA512))
-    file = open("database/login.txt", "a")
+    file = open("database/login.txt", "w")
     file.write(username+":"+hashed+"\n")
     file.close()
 

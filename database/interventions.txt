@@ -1,0 +1,10 @@
+Ciscenje kamenca:500
+Plomba:800
+Vadjenje zuba:1200
+Beljenje zuba:1500
+Fasete:2000
+Ugradjivanje implantata:3000
+Fiksna proteza:1500
+Lecenje zuba:2000
+Apikotomija zuba:1800
+Pregled:500
