@@ -28,7 +28,7 @@ class Doctor(Person):
                 (self.get_name() == other.get_name()) and \
                 (self.get_surname() == other.get_surname())
 
-    def hashCode(self):
+    def __hash__(self):
         info = self.get_id() + self.get_name() + self.get_surname()
         return hashlib.md5(info.encode("utf-8")).hexdigest()
 
@@ -65,7 +65,7 @@ def printDrMenu(info):
 def get_doctor(hash):
     doctors = get_doctors()
     for dr in doctors:
-        if hash == dr.hashCode():
+        if hash == dr.__hash__():
             return dr
     return None
 
