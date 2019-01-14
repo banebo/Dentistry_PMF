@@ -17,7 +17,6 @@ class Nurse(Person):
         self.get_id()+":"+super().__str__()+":nurse"
 
     def get_id(self): return self.__id
-    def get_type(self): return self.__type
 
 def nurse_menu(info):
     while True:
