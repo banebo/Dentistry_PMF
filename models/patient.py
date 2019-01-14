@@ -27,7 +27,7 @@ class Patient(Person):
                 (self.get_alergies() == other.get_alergies()) and \
                 (self.get_illness() == other.get_illness())
 
-    def hashCode(self):
+    def __hash__(self):
         info = self.get_name()+self.get_surname()+self.get_contactInfo()
         return hashlib.md5(info.encode('utf-8')).hexdigest()
 
@@ -115,7 +115,7 @@ def get_patient(hash):
     patients = get_patients()
 
     for p in patients:
-        if p.hashCode() == hash:
+        if p.__hash__() == hash:
             return p
 
     return None
