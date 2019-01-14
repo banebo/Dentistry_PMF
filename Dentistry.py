@@ -10,8 +10,6 @@ import models.doctor as doctor
 import models.admin as admin
 import models.appointment as appointment
 
-sys.setrecursionlimit(3500)
-
 def loginPage():
     os.system("clear")
     print("\n\t{:^10}".format("LOGIN"))
@@ -30,7 +28,7 @@ def loginPage():
 
 def login(username, password):
 
-    if not username.strip() or not password.strip():
+    if not (username.strip() and password):
         return False
 
     if not os.path.isfile("database/login.txt"):
