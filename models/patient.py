@@ -3,6 +3,7 @@
 import os
 import hashlib
 from models.person import Person
+from models import appointment
 
 class Patient(Person):
     def __init__(self, name, surname, contactInfo, alergies, illness):
@@ -31,14 +32,16 @@ class Patient(Person):
         return hashlib.md5(info.encode('utf-8')).hexdigest()
 
 def search_patient():
-    os.system("clear")
+    #os.system("clear")
     print("\n\tSEARCH PATIENT\n")
 
     name = input("[?] Enter name: ").strip().lower()
     surname = input("[?] Enter surname: ").strip().lower()
 
-    if not(name or surname):
-        return
+    while not(name or surname):
+        print("\n[-] Please enter something")
+        name = input("[?] Enter name: ").strip().lower()
+        surname = input("[?] Enter surname: ").strip().lower()
 
     patients = get_patients()
     foundPatients = []
@@ -57,7 +60,7 @@ def search_patient():
                 foundPatients.append(p)
 
     if len(foundPatients) == 0:
-        print("[-] Patient {:s} {:s} not found".format(name.title(),surname.title()))
+        print("\n[-] Patient {:s} {:s} not found".format(name.title(),surname.title()))
         input("\n\nPress Enter to continue...")
         return
 
@@ -76,7 +79,7 @@ def search_patient():
     return
 
 def new_patient():
-    os.system("clear")
+    #os.system("clear")
     print("\n\tNEW PATIENT\n")
 
     name = input("[?] Patient name: ").strip().title()
@@ -96,7 +99,7 @@ def new_patient():
         alergies = "None"
 
     illness = input("[?] Patient illnesses: ").strip()
-    if not illenss:
+    if not illness:
         illness = "None"
 
     info = name+":"+surname+":"+contactInfo+":"+alergies+":"+illness
@@ -128,6 +131,9 @@ def search_patients(name, surname):
     name = name.strip().lower()
     surname = surname.strip().lower()
 
+    if not (name.strip() or surname.strip()):
+        return []
+
     for p in patients:
         pname = p.get_name().lower()
         psurname = p.get_surname().lower()
@@ -155,3 +161,23 @@ def get_patients():
 
     file.close()
     return patients
+
+def find_patient():
+    patientName = input("[?] Enter patient name: ").strip()
+    patientSurname = input("[?] Enter patient surname: ").strip()
+    patient_search = search_patients(patientName, patientSurname)
+
+    while len(patient_search) == 0:
+        print("\n[-] Patient not found")
+        patientName = input("[?] Enter patient name: ")
+        patientSurname = input("[?] Enter patient surname: ")
+        patient_search = search_patients(patientName, patientSurname)
+        
+    if len(patient_search) > 1:
+        patient = appointment.choose(list=patient_search)
+    else:
+        patient = patient_search[0]
+        print("\t[*] One patient found: "+patient.get_name()+" "+ \
+            patient.get_surname())
+
+    return patient

@@ -133,3 +133,21 @@ def print_salary(info):
         print("\n[+] This months salary is: %.2d" % salary)
     input("\n\nPress Enter to continue...")
     return
+
+def find_doctor():
+    drName = input("[?] Enter doctor's name: ")
+    drSurname = input("[?] Enter doctor's surname: ")
+    dr_search = search_doctors(drName, drSurname)
+
+    while len(dr_search) == 0:
+        print("\n[-] Doctor not found")
+        drName = input("[?] Enter doctor's name: ")
+        drSurname = input("[?] Enter doctor's surname: ")
+        dr_search = search_doctors(drName, drSurname)
+        
+    if len(dr_search) > 1:
+        doctor = appointment.choose(type='doctors', list=dr_search)
+    else:
+        doctor = dr_search[0]
+
+    return doctor

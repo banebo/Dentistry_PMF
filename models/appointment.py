@@ -100,7 +100,7 @@ class Appointment:
 
 
 def make_appointment():
-    os.system("clear")
+    #os.system("clear")
     print("\n\tNEW APPOINTMENT")
 
     intervention = choose_intervention()
@@ -116,7 +116,7 @@ def make_appointment():
     date = choose_date(doctor)
     date = "{:%Y-%m-%d %H-%M}".format(date)
 
-    patient = find_patient()
+    patient = models.patient.find_patient()
     
     desc = input("\n[?] Enter appointment description: ")
 
@@ -308,44 +308,6 @@ def choose(type=None, list=None):
 
     return list[choice-1]
 
-def find_patient():
-    patientName = input("[?] Enter patient name: ").strip()
-    patientSurname = input("[?] Enter patient surname: ").strip()
-    patient_search = models.patient.search_patients(patientName, patientSurname)
-
-    while len(patient_search) == 0:
-        print("\n[-] Patient not found")
-        patientName = input("[?] Enter patient name: ")
-        patientSurname = input("[?] Enter patient surname: ")
-        patient_search = models.patient.search_patients(patientName, patientSurname)
-        
-    if len(patient_search) > 1:
-        patient = choose(list=patient_search)
-    else:
-        patient = patient_search[0]
-        print("\t[*] One patient found: "+patient.get_name()+" "+ \
-            patient.get_surname())
-
-    return patient
-
-def find_doctor():
-    drName = input("[?] Enter doctor's name: ")
-    drSurname = input("[?] Enter doctor's surname: ")
-    dr_search = models.doctor.search_doctors(drName, drSurname)
-
-    while len(dr_search) == 0:
-        print("\n[-] Doctor not found")
-        drName = input("[?] Enter doctor's name: ")
-        drSurname = input("[?] Enter doctor's surname: ")
-        dr_search = models.doctor.search_doctors(drName, drSurname)
-        
-    if len(dr_search) > 1:
-        doctor = choose(type='doctors', list=dr_search)
-    else:
-        doctor = dr_search[0]
-
-    return doctor
-
 def get_appointments():
     if not os.path.isfile("database/appointments.txt"):
         print("\n\n[-] Database file is missing!\n")
@@ -387,11 +349,11 @@ def get_appointments_dr_patient(doctor_obj, patient_obj, either=False):
     return appoint_list
 
 def search_appointment():
-    os.system("clear")
+    #os.system("clear")
     print("\n\tSEARCH APPOINTMENT\n")
 
-    patient_obj = find_patient()
-    doctor_obj = find_doctor()
+    patient_obj = models.patient.find_patient()
+    doctor_obj = doctor.find_doctor()
     appointments = get_appointments_dr_patient(doctor_obj, patient_obj)
     if not appointments:
         print("\n[-] No appointments found")
@@ -451,14 +413,14 @@ def get_indexOf(obj, list):
     return None
 
 def modify_appointment_details():
-    os.system("clear")
+    #os.system("clear")
     print("\n\tMODIFY APPOINTMENT DETAILS\n")
 
-    doctor_obj = find_doctor()
-    patient_obj = find_patient()
+    doctor_obj = doctor.find_doctor()
+    patient_obj = models.patient.find_patient()
     appointments = get_appointments_dr_patient(doctor_obj, patient_obj, either=True)
     if not appointments:
-        print("[-] No appointments found!")
+        print("\n[-] No appointments found!")
         input("\n\nPress Enter to continue...")
         return
 
