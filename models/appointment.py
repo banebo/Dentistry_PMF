@@ -120,7 +120,7 @@ def make_appointment():
     
     desc = input("\n[?] Enter appointment description: ")
 
-    appointment = Appointment(date, patient.hashCode(), doctor.hashCode(),\
+    appointment = Appointment(date, patient.__hash__(), doctor.__hash__(),\
         intervention, desc)
 
     file = open("database/appointments.txt", "a")
