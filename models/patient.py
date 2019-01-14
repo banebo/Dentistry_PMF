@@ -50,7 +50,7 @@ def search_patient():
             if surname == psurname:
                 foundPatients.append(p)
         elif not surname:
-            if name == psurname:
+            if name == pname:
                 foundPatients.append(p)
         else:
             if (name == pname) and (surname == psurname):
@@ -65,11 +65,11 @@ def search_patient():
         len(foundPatients), name.title(), surname.title()))
 
     for patient in foundPatients:
-        print("\n\tName: " + patient.get_name())
-        print("\tSurname: " + patient.get_surname())
-        print("\tContact: " + patient.get_contactInfo())
-        print("\tAlergies: " + patient.get_alergies())
-        print("\tIllnesses: " + patient.get_illness())
+        print("\n\t{:12}  {:>s}".format("Name:", patient.get_name()))
+        print("\t{:12}  {:>s}".format("Surname:", patient.get_surname()))
+        print("\t{:12}  {:>s}".format("Contact:", patient.get_contactInfo()))
+        print("\t{:12}  {:>s}".format("Alergies:", patient.get_alergies()))
+        print("\t{:12}  {:>s}".format("Illnesses:", patient.get_illness()))
 
     input("\n\nPress Enter to continue...")
     print()

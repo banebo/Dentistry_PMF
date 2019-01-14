@@ -1,2 +1,3 @@
-nurse:Dragica:Bozic:nurse
-dr:Milutin:Kokic:doctor
+dr:Milutin:Bozic:doctor
+nurse:Andjelka:Bozic:nurse
+dr2:Milutin:Strahinjic:doctor

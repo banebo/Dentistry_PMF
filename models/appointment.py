@@ -30,6 +30,18 @@ class Appointment:
             str(self.get_doctorID())+":"+self.get_intervention()+ \
             ":"+self.get_description()
 
+    def __equals__(self, obj):
+        if not obj: 
+            return False
+
+        return (self.__class__ == obj.__class__) and \
+                (self.get_time() == obj.get_time()) and \
+                (self.get_patientID() == obj.get_patientID()) and \
+                (self.get_doctorID() == obj.get_doctorID()) and \
+                (self.get_intervention() == obj.get_intervention()) and \
+                (self.get_description() == obj.get_description())
+
+
     def tableRepr(self):
         date = self.get_time()
         date = "{:d}.{:d}.{:d} at {:d}:{:d}".format( \
@@ -83,6 +95,8 @@ class Appointment:
 
     def get_description(self): return self.__description
     def get_intervention(self): return self.__intervention
+
+    def set_description(self, newDesc): self.__description = newDesc
 
 
 def make_appointment():
@@ -334,7 +348,8 @@ def find_doctor():
 
 def get_appointments():
     if not os.path.isfile("database/appointments.txt"):
-        return None
+        print("\n\n[-] Database file is missing!\n")
+        exit(1)
 
     appoints = []
     file = open("database/appointments.txt")
@@ -348,11 +363,23 @@ def get_appointments():
     file.close()
     return appoints
 
-def get_appointments_dr_patient(doctor_obj, patient_obj):
+def get_appointments_dr_patient(doctor_obj, patient_obj, either=False):
     appointments = get_appointments()
+    if not appointments:
+        return None
+
     appoint_list = []
 
     for appointment in appointments:
+        if either:
+            if (not doctor_obj) and patient_obj:
+                if appointment.get_patient().__equals__(patient_obj):
+                    appoint_list.append(appointment)
+
+            if (not patient_obj) and doctor_obj:
+                if appointment.get_doctor().__equals__(doctor_obj):
+                    appoint_list.append(appointment)
+
         if (appointment.get_doctor().__equals__(doctor_obj)) and \
         (appointment.get_patient().__equals__(patient_obj)):
             appoint_list.append(appointment)
@@ -366,6 +393,10 @@ def search_appointment():
     patient_obj = find_patient()
     doctor_obj = find_doctor()
     appointments = get_appointments_dr_patient(doctor_obj, patient_obj)
+    if not appointments:
+        print("\n[-] No appointments found")
+        input("\n\nPress Enter to continue...")
+        return
     if len(appointments) > 1:
         print("\n")
         appointment = choose(type="appointments",list=appointments)
@@ -410,5 +441,44 @@ def print_all_appointments():
             print(a.tableRepr())
 
 
+    input("\n\nPress Enter to continue...")
+    return
+
+def get_indexOf(obj, list):
+    for i in range(len(list)):
+        if obj.__equals__(list[i]):
+            return i
+    return None
+
+def modify_appointment_details():
+    os.system("clear")
+    print("\n\tMODIFY APPOINTMENT DETAILS\n")
+
+    doctor_obj = find_doctor()
+    patient_obj = find_patient()
+    appointments = get_appointments_dr_patient(doctor_obj, patient_obj, either=True)
+    if not appointments:
+        print("[-] No appointments found!")
+        input("\n\nPress Enter to continue...")
+        return
+
+    if len(appointments) > 1:
+        print("\n")
+        appointment_obj = choose(type="appointments",list=appointments)
+    else:
+        appointment_obj = appointments[0]
+
+    index = get_indexOf(appointment_obj, appointments)
+
+    newDets = input("[?] Enter new details: ")
+    appointment_obj.set_description(newDets)
+    appointments[index] = appointment_obj
+
+    file = open("database/appointments.txt", "w")
+    for appoint in appointments:
+        file.write(str(appoint) + "\n")
+
+    file.close()
+    print("\n\t[+] Done.")
     input("\n\nPress Enter to continue...")
     return

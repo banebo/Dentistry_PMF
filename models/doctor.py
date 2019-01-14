@@ -2,7 +2,9 @@
 
 import os
 import hashlib
+import datetime
 from models.person import Person
+from models import patient
 from models import appointment
 from models import admin
 
@@ -18,6 +20,9 @@ class Doctor(Person):
     def get_id(self): return self.__id
 
     def __equals__(self, other):
+        if not other:
+            return False
+
         return (self.__class__ == other.__class__) and \
                 (self.get_id() == other.get_id()) and \
                 (self.get_name() == other.get_name()) and \
@@ -32,17 +37,18 @@ def dr_menu(info):
         os.system("clear")
         printDrMenu(info)
         choice = input("\n>> ")
-        while choice.lower() not in ('1','2','3','4','5','6','7','x'):
+        while choice.lower() not in ('1','2','3','4','5','6','x'):
             print("\n[-] Bad option "+ choice if(choice) else " ")
             printDrMenu(info)
             choice = input("\n>> ")
 
         if choice == '1': appointment.search_appointment()
-        elif choice == '2': pass
+        elif choice == '2': appointment.modify_appointment_details()
         elif choice == '3': appointment.print_all_appointments()
+        elif choice == '4': patient.search_patient()
+        elif choice == '5': print_salary(info)
         elif choice == '6': admin.change_password(info)
-        elif choice == 'x':
-            exit(0)
+        elif choice == 'x': exit(0)
 
 def printDrMenu(info):
     print("\nLoged-in as dr. %s %s (%s)" % \
@@ -78,7 +84,7 @@ def get_doctors():
     file.close()
     return doctors
 
-def search_doctors(name, surname):
+def search_doctors(name, surname, id=None):
     doctors = get_doctors()
 
     if len(doctors) == 0:
@@ -100,6 +106,30 @@ def search_doctors(name, surname):
                 doctor_list.append(dr)
         else:
             if (surname==drsurname) and (name==drname):
-                doctor_list.append(p)
+                doctor_list.append(dr)
 
     return doctor_list
+
+def get_salary(info):
+    doctor_obj = search_doctors(info['name'], info['surname'], id=info['id'])[0]
+    appointments = appointment.get_appointments_dr_patient(doctor_obj, None, either=True)
+    if not appointments:
+        return 0
+
+    now = datetime.datetime.now()
+    salary = 0
+    for appoint in appointments:
+        if (appoint.get_time().month == now.month) and \
+        (now > appoint.get_time()):
+            salary += appoint.get_price() * 0.4 # nesto mora i ordinaciji da ostane
+
+    return salary
+    
+def print_salary(info):
+    salary = get_salary(info)
+    if salary == 0:
+        print("[-] You have done no work this month")
+    else:
+        print("\n[+] This months salary is: %.2d" % salary)
+    input("\n\nPress Enter to continue...")
+    return
