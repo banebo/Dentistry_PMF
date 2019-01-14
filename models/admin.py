@@ -17,29 +17,22 @@ def admin_menu(info):
         os.system("clear")                                                      
         printAdminMenu(info)                                                       
         choice = input("\n>> ")                                                 
-        while choice.lower() not in ('1','2','x'):          
+        while choice.lower() not in ('1','x'):          
             print("\n[-] Bad option "+choice)                                   
             printAdminMenu(info)                                                   
             choice = input("\n>> ")                                             
                                                                                  
-        if choice == '1':                                                       
-            registerPage()
-
-        if choice == '2':
-            pass
-
-        elif choice == 'x':                                                     
-            exit(0)                                                             
+        if choice == '1': registerPage()
+        elif choice == 'x': exit(0)                                                             
 
 def printAdminMenu(info):
     print("\nLogged in as " + info['id'])
 
     print("\n\t[1] Register employee")
-    print("\n\t[2] Delete user")
     print("\t[x] Exit")
 
 def registerPage():
-    os.system("clear")
+    #os.system("clear")
     print("\nREGISTER\n")
 
     name = str(input("[?] Name: ")).strip().title()
@@ -93,7 +86,7 @@ def username_exists(username):
     return False
 
 def change_password(info):
-    os.system("clear")
+    #os.system("clear")
     print("\n\tPASSWORD CHANGE\n")
     file = open("database/login.txt")
     list = []

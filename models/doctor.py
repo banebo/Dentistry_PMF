@@ -88,7 +88,7 @@ def search_doctors(name, surname, id=None):
     doctors = get_doctors()
 
     if len(doctors) == 0:
-        print("[-] No doctors in database")
+        print("\n[-] No doctors in database")
         return None
 
     doctor_list = []
