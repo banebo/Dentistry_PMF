@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os
-#import models.patient as patient
 from models import patient
 from models.person import Person
 from models import appointment
