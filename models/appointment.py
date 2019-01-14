@@ -83,13 +83,13 @@ class Appointment:
 
     def get_patient(self): 
         for p in models.patient.get_patients():
-            if p.hashCode() == self.get_patientID():
+            if p.__hash__() == self.get_patientID():
                 return p
         return None
  
     def get_doctor(self): 
         for dr in doctor.get_doctors():
-            if dr.hashCode() == self.get_doctorID():
+            if dr.__hash__() == self.get_doctorID():
                 return dr
         return None
 
