@@ -19,7 +19,7 @@ class Nurse(Person):
 
 def nurse_menu(info):
     while True:
-        #os.system("clear")
+        os.system("clear")
         printNurseMenu(info)
         choice = input("\n>> ")
         while choice.lower() not in ('1','2','3','4','5','6','x'):

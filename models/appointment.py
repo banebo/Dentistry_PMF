@@ -233,7 +233,9 @@ def bad_time(doctor, time):
         info = line.split(":")
         appoint_date = datetime.datetime.strptime(info[0], "%Y-%m-%d %H-%M")
 
-        if (models.doctor.get_doctor(info[2]).__equals__(doctor)) and \
+        tmpDr = models.doctor.get_doctor(info[2].strip())
+        if not tmpDr: continue
+        if (tmpDr.__equals__(doctor)) and \
         (appoint_date == time):
             return True
 
@@ -342,8 +344,11 @@ def get_appointments_dr_patient(doctor_obj, patient_obj, either=False):
                 if appointment.get_doctor().__equals__(doctor_obj):
                     appoint_list.append(appointment)
 
-        if (appointment.get_doctor().__equals__(doctor_obj)) and \
-        (appointment.get_patient().__equals__(patient_obj)):
+        tmpDr = appointment.get_doctor()
+        tmpPatient = appointment.get_patient()
+        if not (tmpDr and tmpPatient): continue
+        if (tmpDr.__equals__(doctor_obj)) and \
+        (tmpPatient.__equals__(patient_obj)):
             appoint_list.append(appointment)
 
     return appoint_list
